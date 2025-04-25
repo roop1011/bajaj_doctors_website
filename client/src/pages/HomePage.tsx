@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import FilterPanel from '@/components/FilterPanel';
 import DoctorList from '@/components/DoctorList';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { useDoctorSearch } from '@/hooks/useDoctorSearch';
+import { Doctor } from '@/types/doctor';
 
 const HomePage: React.FC = () => {
+  // Get filters from URL params
   const [filters, updateFilters] = useQueryParams();
   
+  // Fetch and filter doctors
   const { 
     doctors, 
     suggestions, 
@@ -17,14 +20,16 @@ const HomePage: React.FC = () => {
     error 
   } = useDoctorSearch(filters);
 
-  const handleSearch = (searchTerm: string) => {
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleSearch = useCallback((searchTerm: string) => {
     updateFilters({ search: searchTerm });
-  };
+  }, [updateFilters]);
 
-  const handleSuggestionClick = (doctor: any) => {
+  const handleSuggestionClick = useCallback((doctor: Doctor) => {
     updateFilters({ search: doctor.name });
-  };
+  }, [updateFilters]);
 
+  // Show error state
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -43,6 +48,7 @@ const HomePage: React.FC = () => {
     );
   }
 
+  // Main layout
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
