@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
+import {
   Dialog,
-  DialogContent, 
-  DialogHeader, 
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter 
+  DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchTerm);
-  
+
   // Auth form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-semibold text-white">Roop Health</h1>
           </div>
-          
+
           {/* Search bar */}
           <div className="max-w-xl w-full hidden md:block mx-4">
             <div className="relative">
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
-              <button 
+              <button
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-600"
                 onClick={handleSearchSubmit}
               >
@@ -87,14 +87,14 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
               </button>
             </div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex space-x-6">
-              <a href="#" className="text-white font-medium hover:text-blue-200">Find Doctors</a>
-              <a href="#" className="text-white font-medium hover:text-blue-200">Appointments</a>
-              <a href="#" className="text-white font-medium hover:text-blue-200">Health Records</a>
+              <a href="#" className="text-white font-medium hover:text-blue-200"></a>
+              <a href="#" className="text-white font-medium hover:text-blue-200"></a>
+              <a href="#" className="text-white font-medium hover:text-blue-200"></a>
             </nav>
-            
+
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 <span className="text-white">Hi, {user}</span>
@@ -119,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                       <TabsTrigger value="login">Login</TabsTrigger>
                       <TabsTrigger value="register">Register</TabsTrigger>
                     </TabsList>
-                    
+
                     {/* Login Form */}
                     <TabsContent value="login">
                       <form onSubmit={handleLogin}>
@@ -131,9 +131,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                         <div className="space-y-4 py-4">
                           <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
-                            <Input 
-                              id="email" 
-                              type="email" 
+                            <Input
+                              id="email"
+                              type="email"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
@@ -141,9 +141,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
-                            <Input 
-                              id="password" 
-                              type="password" 
+                            <Input
+                              id="password"
+                              type="password"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
                               required
@@ -155,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                         </DialogFooter>
                       </form>
                     </TabsContent>
-                    
+
                     {/* Register Form */}
                     <TabsContent value="register">
                       <form onSubmit={handleRegister}>
@@ -167,9 +167,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                         <div className="space-y-4 py-4">
                           <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
-                            <Input 
-                              id="username" 
-                              type="text" 
+                            <Input
+                              id="username"
+                              type="text"
                               value={username}
                               onChange={(e) => setUsername(e.target.value)}
                               required
@@ -177,9 +177,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="register-email">Email</Label>
-                            <Input 
-                              id="register-email" 
-                              type="email" 
+                            <Input
+                              id="register-email"
+                              type="email"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
@@ -187,9 +187,9 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="register-password">Password</Label>
-                            <Input 
-                              id="register-password" 
-                              type="password" 
+                            <Input
+                              id="register-password"
+                              type="password"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
                               required
@@ -206,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
               </Dialog>
             )}
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <Button variant="ghost" className="text-white">
@@ -217,7 +217,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, searchTerm = '' }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile search */}
       <div className="md:hidden px-4 pb-3">
         <div className="relative">
