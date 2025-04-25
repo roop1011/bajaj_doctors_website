@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
-import { useLocation, useRoute } from "wouter";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useLocation } from "wouter";
 import { Filters, ConsultationType, SortOption } from "@/types/doctor";
 
 export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => void] => {
   const [location, setLocation] = useLocation();
+  const isInitialMount = useRef(true);
   
   const getInitialFilters = useCallback((): Filters => {
     const params = new URLSearchParams(window.location.search);
@@ -18,8 +19,15 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
   
   const [filters, setFilters] = useState<Filters>(getInitialFilters);
   
-  // Update URL when filters change
+  // Update URL when filters change, but skip on initial mount
   useEffect(() => {
+    // Skip the effect on the initial render
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
+    // Create query parameters from filters
     const params = new URLSearchParams();
     
     if (filters.search) params.set("search", filters.search);
@@ -27,8 +35,14 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
     if (filters.specialties.length > 0) params.set("specialties", filters.specialties.join(","));
     if (filters.sortBy) params.set("sortBy", filters.sortBy);
     
-    const newUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
-    setLocation(newUrl, { replace: true });
+    // Build the new URL
+    const queryString = params.toString();
+    const newUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ""}`;
+    
+    // Only update the URL if it's different from the current one
+    if (newUrl !== window.location.pathname + window.location.search) {
+      setLocation(newUrl, { replace: true });
+    }
   }, [filters, setLocation]);
   
   // Listen for history changes (back/forward)
