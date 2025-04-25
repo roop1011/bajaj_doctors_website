@@ -39,8 +39,28 @@ const HomePage: React.FC = () => {
         
         const apiData = await response.json();
         
+        // Define interface for the API response
+        interface ApiDoctorData {
+          id?: string;
+          name?: string;
+          photo?: string;
+          experience?: string;
+          fees?: string;
+          video_consult?: boolean;
+          in_clinic?: boolean;
+          languages?: string[];
+          specialities?: Array<{name: string}>;
+          clinic?: {
+            name?: string;
+            address?: {
+              locality?: string;
+              city?: string;
+            }
+          };
+        }
+        
         // Transform API data to our format
-        const transformedDoctors = apiData.map((doctor: any) => {
+        const transformedDoctors = apiData.map((doctor: ApiDoctorData) => {
           // Extract experience years from string
           const experienceMatch = doctor.experience?.match(/(\d+)/);
           const experienceYears = experienceMatch ? parseInt(experienceMatch[1], 10) : 0;
@@ -58,7 +78,7 @@ const HomePage: React.FC = () => {
             id: doctor.id || `doc-${Math.random().toString(36).substr(2, 9)}`,
             name: doctor.name || 'Unknown Doctor',
             image: doctor.photo || undefined,
-            specialty: doctor.specialities?.map((spec: any) => spec.name) || [],
+            specialty: doctor.specialities?.map((spec: {name: string}) => spec.name) || [],
             experience: experienceYears,
             fee: feeAmount,
             consultationMode: {
@@ -75,8 +95,8 @@ const HomePage: React.FC = () => {
         
         // Extract unique specialties
         const allSpecialties = new Set<string>();
-        transformedDoctors.forEach(doctor => {
-          doctor.specialty.forEach(specialty => {
+        transformedDoctors.forEach((doctor: Doctor) => {
+          doctor.specialty.forEach((specialty: string) => {
             allSpecialties.add(specialty);
           });
         });
