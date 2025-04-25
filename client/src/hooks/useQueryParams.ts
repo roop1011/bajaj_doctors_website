@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { Filters, ConsultationType, SortOption } from "@/types/doctor";
 
 export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => void] => {
   const [location, setLocation] = useLocation();
+  const isUpdatingRef = useRef(false);
   
   // Get initial filters from URL parameters on first load
   const getInitialFilters = useCallback((): Filters => {
@@ -19,12 +20,11 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
   
   // Initialize filters state with values from URL
   const [filters, setFilters] = useState<Filters>(getInitialFilters);
-  const [isFirstRender, setIsFirstRender] = useState(true);
   
   // Update URL when filters change (but not on first render)
   useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false);
+    // Skip if we're currently updating from URL change
+    if (isUpdatingRef.current) {
       return;
     }
     
@@ -38,10 +38,20 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
     const queryString = params.toString();
     const newUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ""}`;
     
-    if (location !== newUrl) {
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== newUrl) {
       setLocation(newUrl, { replace: true });
     }
-  }, [filters, location, setLocation, isFirstRender]);
+  }, [filters, setLocation]);
+  
+  // Update filters when URL changes
+  useEffect(() => {
+    if (location === '/') return; // Skip on initial render with empty location
+    
+    isUpdatingRef.current = true;
+    setFilters(getInitialFilters());
+    isUpdatingRef.current = false;
+  }, [location, getInitialFilters]);
   
   // Function to update filters
   const updateFilters = useCallback((newFilters: Partial<Filters>) => {

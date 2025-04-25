@@ -1,8 +1,8 @@
 import React from 'react';
 import { Doctor } from '@/types/doctor';
 import DoctorCard from './DoctorCard';
-import AppliedFilters from './AppliedFilters';
 import { Filters } from '@/types/doctor';
+import { Loader2 } from 'lucide-react';
 
 interface DoctorListProps {
   doctors: Doctor[];
@@ -19,32 +19,17 @@ const DoctorList: React.FC<DoctorListProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-neutral-500">Loading doctors...</p>
-        </div>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <span className="ml-2 text-neutral-600">Loading doctors...</span>
       </div>
     );
   }
 
-  if (doctors.length === 0) {
-    return (
-      <div className="space-y-4">
-        <AppliedFilters filters={filters} updateFilters={updateFilters} />
-        <div className="bg-white p-12 rounded-lg shadow-sm text-center">
-          <h3 className="text-xl font-medium text-neutral-500 mb-2">No doctors found</h3>
-          <p className="text-neutral-400">
-            Try adjusting your search or filter criteria to find more doctors.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+  // Empty state is now handled in HomePage component
+  
   return (
-    <div className="space-y-4">
-      <AppliedFilters filters={filters} updateFilters={updateFilters} />
+    <div data-testid="doctors-list" className="space-y-4">
       {doctors.map((doctor) => (
         <DoctorCard key={doctor.id} doctor={doctor} />
       ))}

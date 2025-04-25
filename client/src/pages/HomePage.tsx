@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <Header onSearch={handleSearch} searchTerm={filters.search} />
         <main>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="bg-white p-12 rounded-lg shadow-sm text-center">
@@ -51,26 +51,31 @@ const HomePage: React.FC = () => {
   // Main layout
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      {/* Pass search functionality to Header */}
+      <Header onSearch={handleSearch} searchTerm={filters.search} />
       <main>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* FilterPanel */}
-            <FilterPanel 
-              filters={filters} 
-              updateFilters={updateFilters} 
-              availableSpecialties={availableSpecialties} 
-            />
+            <div className="w-full lg:w-72">
+              <FilterPanel 
+                filters={filters} 
+                updateFilters={updateFilters} 
+                availableSpecialties={availableSpecialties} 
+              />
+            </div>
             
             {/* Main Content Area */}
             <div className="flex-1">
-              {/* SearchBar */}
-              <SearchBar 
-                searchTerm={filters.search} 
-                onSearch={handleSearch} 
-                suggestions={suggestions} 
-                onSuggestionClick={handleSuggestionClick} 
-              />
+              {/* Doctor Count and Applied Filters */}
+              <div className="mb-4">
+                <h1 className="text-xl font-semibold text-gray-800">
+                  {doctors.length} Doctor{doctors.length !== 1 ? 's' : ''} Available
+                </h1>
+                {filters.search && (
+                  <p className="text-sm text-gray-600">Search results for: "{filters.search}"</p>
+                )}
+              </div>
               
               {/* DoctorList */}
               <DoctorList 
@@ -79,6 +84,22 @@ const HomePage: React.FC = () => {
                 updateFilters={updateFilters} 
                 isLoading={isLoading} 
               />
+              
+              {/* No Results */}
+              {!isLoading && doctors.length === 0 && (
+                <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">No doctors found</h3>
+                  <p className="text-gray-500">
+                    Try adjusting your search or filter criteria to find more doctors.
+                  </p>
+                  <button 
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    onClick={() => updateFilters({ search: '', specialties: [], consultationType: '', sortBy: '' })}
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
