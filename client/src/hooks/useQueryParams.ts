@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Filters, ConsultationType, SortOption } from "@/types/doctor";
 
 export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => void] => {
   const [location, setLocation] = useLocation();
-  const isInitialMount = useRef(true);
   
+  // Get initial filters from URL parameters on first load
   const getInitialFilters = useCallback((): Filters => {
     const params = new URLSearchParams(window.location.search);
     
@@ -17,17 +17,17 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
     };
   }, []);
   
+  // Initialize filters state with values from URL
   const [filters, setFilters] = useState<Filters>(getInitialFilters);
+  const [isFirstRender, setIsFirstRender] = useState(true);
   
-  // Update URL when filters change, but skip on initial mount
+  // Update URL when filters change (but not on first render)
   useEffect(() => {
-    // Skip the effect on the initial render
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
+    if (isFirstRender) {
+      setIsFirstRender(false);
       return;
     }
     
-    // Create query parameters from filters
     const params = new URLSearchParams();
     
     if (filters.search) params.set("search", filters.search);
@@ -35,32 +35,21 @@ export const useQueryParams = (): [Filters, (newFilters: Partial<Filters>) => vo
     if (filters.specialties.length > 0) params.set("specialties", filters.specialties.join(","));
     if (filters.sortBy) params.set("sortBy", filters.sortBy);
     
-    // Build the new URL
     const queryString = params.toString();
     const newUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ""}`;
     
-    // Only update the URL if it's different from the current one
-    if (newUrl !== window.location.pathname + window.location.search) {
+    if (location !== newUrl) {
       setLocation(newUrl, { replace: true });
     }
-  }, [filters, setLocation]);
+  }, [filters, location, setLocation, isFirstRender]);
   
-  // Listen for history changes (back/forward)
-  useEffect(() => {
-    const handlePopState = () => {
-      setFilters(getInitialFilters());
-    };
-    
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [getInitialFilters]);
-  
-  const updateFilters = (newFilters: Partial<Filters>) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
+  // Function to update filters
+  const updateFilters = useCallback((newFilters: Partial<Filters>) => {
+    setFilters(prev => ({
+      ...prev,
       ...newFilters,
     }));
-  };
+  }, []);
   
   return [filters, updateFilters];
 };

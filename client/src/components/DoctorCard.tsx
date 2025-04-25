@@ -1,91 +1,81 @@
 import React from 'react';
 import { Doctor } from '@/types/doctor';
-import { Clock, ThumbsUp, Video, Building, Stethoscope, MapPin } from 'lucide-react';
+import { Clock, MapPin, Building, Medal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface DoctorCardProps {
   doctor: Doctor;
 }
 
 const DoctorCard: React.FC<DoctorCardProps> = ({ doctor }) => {
+  // Handle booking appointment
+  const handleBookAppointment = () => {
+    // In a real application, this would open a modal or navigate to an appointment booking page
+    alert(`Booking an appointment with ${doctor.name}`);
+  };
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm" data-testid="doctor-card">
+    <div className="bg-white p-6 rounded-lg shadow-sm mb-4" data-testid="doctor-card">
       <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/4 mb-4 md:mb-0 flex justify-center md:justify-start">
-          <div className="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+        {/* Doctor Image */}
+        <div className="md:w-1/6 flex-shrink-0 mb-4 md:mb-0 flex justify-center md:justify-start">
+          <div className="h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-2 border-blue-100">
             {doctor.image ? (
               <img src={doctor.image} alt={doctor.name} className="h-full w-full object-cover" />
             ) : (
-              <span className="text-4xl text-gray-400">{doctor.name.charAt(0)}</span>
+              <span className="text-2xl text-gray-400">{doctor.name.charAt(0)}</span>
             )}
           </div>
         </div>
-        <div className="md:w-3/4">
+
+        {/* Doctor Information */}
+        <div className="md:w-3/4 flex-1">
           <div className="flex flex-col md:flex-row md:justify-between">
             <div>
-              <h3 data-testid="doctor-name" className="text-lg font-semibold text-neutral-500">
+              {/* Doctor Name and Specialty */}
+              <h3 data-testid="doctor-name" className="text-lg font-semibold text-blue-800">
                 {doctor.name}
               </h3>
-              <p data-testid="doctor-specialty" className="text-primary text-sm mb-2">
-                {doctor.specialty.join(', ')}
+              <p data-testid="doctor-specialty" className="text-neutral-700 text-sm mb-1">
+                General Physician
               </p>
-              <p data-testid="doctor-experience" className="text-neutral-400 text-sm mb-2">
-                <Clock className="inline-block mr-1 h-4 w-4" /> {doctor.experience} years experience
+              <p className="text-neutral-500 text-xs mb-1">
+                {doctor.specialty.length > 0 && `${doctor.specialty[0]} • General Medicine`}
               </p>
               
-              {doctor.reviews ? (
-                <div className="flex items-center mb-2">
-                  <div className="bg-green-50 text-success text-xs font-medium px-2 py-1 rounded mr-2">
-                    {doctor.reviews.rating}% <ThumbsUp className="inline-block ml-1 h-3 w-3" />
-                  </div>
-                  <span className="text-neutral-400 text-sm">{doctor.reviews.count} patient reviews</span>
-                </div>
-              ) : (
-                <div className="flex items-center mb-2">
-                  <div className="bg-green-50 text-success text-xs font-medium px-2 py-1 rounded mr-2">
-                    <span>Highly Rated</span> <ThumbsUp className="inline-block ml-1 h-3 w-3" />
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="mt-4 md:mt-0">
-              <p data-testid="doctor-fee" className="text-neutral-500 font-medium text-lg mb-1">
-                ₹{doctor.fee}
+              {/* Doctor Experience */}
+              <p data-testid="doctor-experience" className="text-neutral-600 text-sm mb-1">
+                <Clock className="inline-block mr-1 h-3 w-3" /> {doctor.experience} yrs exp.
               </p>
-              <p className="text-neutral-300 text-sm mb-3">Consultation fee</p>
-              <div className="space-x-2">
-                <button className="bg-secondary hover:bg-secondary-dark text-white text-sm font-medium px-4 py-2 rounded">
-                  Book Appointment
-                </button>
+              
+              {/* Doctor Clinic Info */}
+              <div className="mt-2 flex items-center text-xs text-neutral-500">
+                {doctor.clinic && (
+                  <div className="flex items-center mr-4">
+                    <Medal className="h-3.5 w-3.5 mr-1" />
+                    {doctor.clinic}
+                  </div>
+                )}
+                {doctor.location && (
+                  <div className="flex items-center">
+                    <MapPin className="h-3.5 w-3.5 mr-1" />
+                    {doctor.location}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-neutral-100">
-            <div className="flex flex-wrap gap-3">
-              {doctor.consultationMode.videoConsult && (
-                <div className="bg-neutral-100 text-neutral-400 text-xs px-3 py-1 rounded-full">
-                  <Video className="inline-block mr-1 h-3 w-3" /> Video Consult
-                </div>
-              )}
-              {doctor.consultationMode.inClinic && (
-                <div className="bg-neutral-100 text-neutral-400 text-xs px-3 py-1 rounded-full">
-                  <Building className="inline-block mr-1 h-3 w-3" /> In Clinic
-                </div>
-              )}
-              {doctor.languages.length > 0 && (
-                <div className="bg-neutral-100 text-neutral-400 text-xs px-3 py-1 rounded-full">
-                  <Stethoscope className="inline-block mr-1 h-3 w-3" /> {doctor.languages.join(', ')}
-                </div>
-              )}
-              {doctor.location && (
-                <div className="bg-neutral-100 text-neutral-400 text-xs px-3 py-1 rounded-full">
-                  <MapPin className="inline-block mr-1 h-3 w-3" /> {doctor.location}
-                </div>
-              )}
-              {doctor.clinic && (
-                <div className="bg-neutral-100 text-neutral-400 text-xs px-3 py-1 rounded-full">
-                  <Building className="inline-block mr-1 h-3 w-3" /> {doctor.clinic}
-                </div>
-              )}
+            
+            {/* Fee and Book Button */}
+            <div className="mt-4 md:mt-0 text-right">
+              <p data-testid="doctor-fee" className="text-blue-800 font-medium text-lg mb-1">
+                ₹ {doctor.fee}
+              </p>
+              <Button 
+                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto"
+                onClick={handleBookAppointment}
+              >
+                Book Appointment
+              </Button>
             </div>
           </div>
         </div>
